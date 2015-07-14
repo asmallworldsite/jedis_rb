@@ -1,5 +1,7 @@
 module JedisRb
   class Pool
+    attr_reader :connection_pool
+
     def initialize(options={})
       config = options.fetch(:config) { Wrapped::PoolConfig.new }
       host = options.fetch(:host, Wrapped::Protocol::DEFAULT_HOST)
@@ -9,7 +11,7 @@ module JedisRb
       database = options.fetch(:database, Wrapped::Protocol::DEFAULT_DATABASE)
       client_name = options.fetch(:client_name, nil)
 
-      @pool = Wrapped::Pool.new(
+      @connection_pool = Wrapped::Pool.new(
         config,
         host,
         port,
@@ -22,10 +24,10 @@ module JedisRb
 
     def yield_connection
       begin
-        resource = @pool.resource
+        resource = @connection_pool.resource
         yield resource
       ensure
-        resource.close
+        resource.close if resource
       end
     end
 
