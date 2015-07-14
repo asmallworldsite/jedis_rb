@@ -62,4 +62,46 @@ describe JedisRb::Pool do
       end
     end
   end
+
+  describe 'Ruby object conversion' do
+    let(:instance) { described_class.new(convert_objects: true) }
+
+    context 'with a list' do
+      it 'returns a Ruby Array' do
+        value = instance.yield_connection do |c|
+          c.set 'test_key_1', 'value'
+          c.set 'test_key_2', 'value'
+          c.expire 'test_key_1', 1
+          c.expire 'test_key_2', 1
+          c.mget 'test_key_1', 'test_key_2'
+        end
+
+        expect(value).to be_an_instance_of(Array)
+      end
+    end
+
+    context 'with a set' do
+      it 'returns a Ruby Set' do
+        value = instance.yield_connection do |c|
+          c.sadd 'test_set', '1', '2'
+          c.expire 'test_set', 1
+          c.smembers 'test_set'
+        end
+
+        expect(value).to be_an_instance_of(Set)
+      end
+    end
+
+    context 'with a map' do
+      it 'returns a Ruby Hash' do
+        value = instance.yield_connection do |c|
+          c.hset 'test_hash', 'key', 'value'
+          c.expire 'test_hash', 1
+          c.hget_all 'test_hash'
+        end
+
+        expect(value).to be_an_instance_of(Hash)
+      end
+    end
+  end
 end

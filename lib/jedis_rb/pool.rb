@@ -11,6 +11,8 @@ module JedisRb
       database = options.fetch(:database, Wrapped::Protocol::DEFAULT_DATABASE)
       client_name = options.fetch(:client_name, nil)
 
+      @convert_objects = options.fetch(:convert_objects, false)
+
       @connection_pool = Wrapped::Pool.new(
         config,
         host,
@@ -23,17 +25,34 @@ module JedisRb
     end
 
     def yield_connection
-      begin
+      response = begin
         resource = @connection_pool.resource
         yield resource
       ensure
         resource.close if resource
+      end
+
+      if @convert_objects
+        convert(response)
+      else
+        response
       end
     end
 
     def execute(method, *args)
       yield_connection do |connection|
         connection.send(method, *args)
+      end
+    end
+
+    private
+
+    def convert(value)
+      case value
+      when java.util.List then value.to_a
+      when java.util.Set then value.to_set
+      when java.util.Map then value.to_hash
+      else value
       end
     end
   end
