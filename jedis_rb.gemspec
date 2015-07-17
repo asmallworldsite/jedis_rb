@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "jedis_rb"
   spec.version       = JedisRb::VERSION
   spec.authors       = ["Michael Sell"]
-  spec.email         = ["mdsell@gmail.com"]
+  spec.email         = ['michael@asw.com']
 
   spec.summary       = "A Ruby gem which wraps the Jedis Redis Java client, for use with JRuby"
   spec.description   = "A Ruby gem which wraps the Jedis Redis Java client, for use with JRuby"
