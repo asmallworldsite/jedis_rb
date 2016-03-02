@@ -50,7 +50,7 @@ RedisPool.execute :setex, 'foo', 600, 'fish'
 => "OK"
 ```
 
-Or in parallel, in a block:
+Or reusing one connection, in a block:
 
 ```
 RedisPool.with_connection do |c|
