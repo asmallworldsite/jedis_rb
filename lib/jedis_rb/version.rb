@@ -1,3 +1,3 @@
 module JedisRb
-  VERSION = "2.7.2"
+  VERSION = "2.8.1"
 end
